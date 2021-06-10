@@ -1,8 +1,28 @@
 var map = L.map('map', {
-	crs: L.CRS.Simple
+	crs: L.CRS.Simple,
+	center: [0, 0],
+	zoom: 3
 });
 
-var bounds = [[0,0], [2000,2000]];
-var image = L.imageOverlay('/img/uqm_map_full.png', bounds).addTo(map);
+var TILE_URL = 'http://c.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg';
 
-map.fitBounds(bounds);
+L.TileLayer.CusomMap = L.TileLayer.extend({
+	getTileUrl: function(coord) {
+
+		var url = TILE_URL
+			.replace('{x}', coord.x)
+			.replace('{y}', coord.y)
+			.replace('{z}', coord.z);
+		
+		console.log('url:', url);
+
+		return url;
+	}
+});
+
+L.tileLayer.customMap = function() {
+	return new L.TileLayer.CusomMap();
+}
+
+map.addLayer( L.tileLayer.customMap() );
+
